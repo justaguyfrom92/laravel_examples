@@ -1,0 +1,85 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue Popup Example</title>
+  <style>
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .popup.active,
+    .overlay.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <table>
+      <tr v-for="entry in entries" :key="entry.id" :id="'entry_'+entry.id">
+        <td>{{ entry.id }}</td>
+        <td>{{ entry.name }}</td>
+        <td><button @click="showPopup(entry.id)">Show Popup</button></td>
+        <td><button @click="deleteEntry(entry.id)">Delete Entry</button></td>
+      </tr>
+    </table>
+    <div class="overlay" :class="{ active: show }"></div>
+    <div class="popup" :class="{ active: show }">
+      <p>ID: {{ popupId }}</p>
+      <button @click="hidePopup">Close</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        show: false,
+        popupId: null,
+        entries: [
+          { id: 1, name: 'Entry 1' },
+          { id: 2, name: 'Entry 2' },
+          { id: 3, name: 'Entry 3' },
+          { id: 4, name: 'Entry 4' },
+          { id: 5, name: 'Entry 5' }
+        ]
+      },
+      methods: {
+        showPopup(id) {
+          this.popupId = id;
+          this.show = true;
+        },
+        hidePopup() {
+          this.show = false;
+        },
+ deleteEntry(id) {
+      var element = document.getElementById("entry_"+id);
+      element.parentNode.removeChild(element);
+      this.popupId = id;
+      this.show = true;
+    },
+      }
+    });
+  </script>
+
+</body>
+</html>
