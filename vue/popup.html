@@ -1,0 +1,63 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue Popup Example</title>
+<style>
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.popup.active,
+.overlay.active {
+  display: block;
+}
+
+</style>
+</head>
+<body>
+
+<div id="app">
+  <button @click="togglePopup">Show Popup</button>
+  <div class="overlay" :class="{ active: show }"></div>
+  <div class="popup" :class="{ active: show }">
+    <p>This is a popup!</p>
+    <button @click="togglePopup">Close</button>
+  </div>
+</div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script>
+new Vue({
+  el: '#app',
+  data: {
+    show: false
+  },
+  methods: {
+    togglePopup() {
+      this.show = !this.show;
+    }
+  }
+});
+
+</script>
+
+</body>
+</html>
