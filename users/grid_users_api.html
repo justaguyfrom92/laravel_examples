@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue Components Example</title>
+  <!-- Include Vue.js and Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
+    }
+    #app {
+      max-width: 50rem; /* Adjust the max width here */
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    input[type="text"] {
+      width: calc(100% - 140px); /* Adjust the width here */
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .user-list {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .user-item {
+      width: calc(50% - 20px); /* Adjust the width here */
+      margin: 10px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .user-item img {
+      width: 100%;
+      max-width: 100px; /* Adjust the maximum width here */
+      height: auto;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+    .user-info p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <h1>Random User Information</h1>
+  <div>
+    <input type="text" v-model="numResults" placeholder="Number of users" inputmode="numeric" pattern="[0-9]*">
+    <button @click="fetchUsers">Fetch Random Users</button>
+  </div>
+  <div class="user-list">
+    <user-item v-for="user in users" :key="user.login.uuid" :user="user"></user-item>
+  </div>
+</div>
+
+<script>
+  // Define a TodoItem component
+  Vue.component('user-item', {
+    props: ['user'],
+    template: `
+      <div class="user-item">
+        <img :src="user.picture.large" :alt="user.name.first">
+        <div class="user-info">
+          <p>Name: {{ user.name.first }} {{ user.name.last }}</p>
+          <p>Email: {{ user.email }}</p>
+          <p>Age: {{ user.dob.age }}</p>
+          <p>Gender: {{ user.gender }}</p>
+          <p>Location: {{ user.location.city }}, {{ user.location.country }}</p>
+        </div>
+      </div>`
+  });
+
+  // Initialize a Vue instance
+  new Vue({
+    el: '#app',
+    data: {
+      users: [],
+      numResults: null
+    },
+    methods: {
+      checkNum(num) {
+        if (num === null || isNaN(num) || num <= 0 || !Number.isInteger(+num)) {
+          alert('Please enter a valid number.');
+          return false;
+        }
+        return true;
+      },
+      fetchUsers() {
+        if (this.checkNum(this.numResults)) {
+          axios.get(`https://randomuser.me/api/?results=${this.numResults}`)
+            .then(response => {
+              this.users = response.data.results;
+              this.saveUsersToServer(this.users);
+            })
+            .catch(error => {
+              console.error('Error fetching random users:', error);
+            });
+        }
+      },
+      saveUsersToServer(users) {
+        axios.post('/save-users', users)
+          .then(response => {
+            console.log('Data sent to Laravel controller:', response.data);
+          })
+          .catch(error => {
+            console.error('Error sending data to Laravel controller:', error);
+          });
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
